@@ -1,7 +1,12 @@
 const http = require('http');
-const {getUsers, addUser} = require('./repository');
+const {usersController} = require('./usersController')
 
 const PORT = 5000
+
+// обработка ошибок
+process.on('unhandledRejection', (reason, p) => {
+    console.log(reason, p)
+});
 
 const cors = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,12 +27,7 @@ const server = http.createServer((req, res) => {
 
     switch (req.url) {
         case '/users':
-            if (req.method === 'POST') {
-                addUser('David')
-                res.write(JSON.stringify({messages: 'user added'}));
-            } else {
-                res.write(JSON.stringify(getUsers()));
-            }
+            usersController(req, res)
             break;
         case '/lessons':
             res.write(`lessons`);
@@ -35,8 +35,6 @@ const server = http.createServer((req, res) => {
         default:
             res.write(`PAGE NOT FOUND`);
     }
-
-    res.end()
 })
 
 server.listen(PORT, () => {

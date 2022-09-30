@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import './App.css';
 import axios from "axios";
 
@@ -10,6 +10,7 @@ type DateType = {
 function App() {
 
     const [data, setData] = useState<DateType[]>([])
+    const [value, setValue] = useState<string>('')
 
     const getUsers = () => {
         axios.get('http://localhost:5000/users')
@@ -18,11 +19,15 @@ function App() {
             })
     }
 
-    const addUserHandler = () => {
-        axios.post('http://localhost:5000/users')
+    const addUserHandler = (name: string) => {
+        axios.post('http://localhost:5000/users', {name})
             .then(res => {
                 getUsers()
             })
+    }
+
+    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setValue(e.currentTarget.value)
     }
 
     useEffect(() => {
@@ -33,7 +38,8 @@ function App() {
 
         <div className="App">
             {data.map(el => <div>{el.name}</div>)}
-            <button onClick={addUserHandler}>add user</button>
+            <input value={value} onChange={onChangeHandler}/>
+            <button onClick={() => addUserHandler(value)}>add user</button>
         </div>
     );
 }
