@@ -1,4 +1,3 @@
-const fs = require('fs');
 const {readJSONFromFile, writeJSONToFile} = require('./fs-utils')
 
 const getUsers = () => {
