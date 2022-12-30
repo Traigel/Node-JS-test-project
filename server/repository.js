@@ -1,14 +1,16 @@
-const {readJSONFromFile, writeJSONToFile} = require('./fs-utils')
+const {readJsonFromFile, writeJsonToFile} = require('./fs-utils')
 
+// Берём данные из файла и возвращаем в виде промиса
 const getUsers = () => {
-    return readJSONFromFile('db.json')
+  return readJsonFromFile('db.json')
 }
 
-const addUser = async (name) => {
-    const users = await getUsers()
-    users.push({"id": 4, "name": name})
-    return writeJSONToFile('db.json', users)
+// Берём данные из файла и добавляем к ним новые данные
+const addUsers =  async (name) => {
+  const users = await getUsers()
+  users.push({"id": 3, "name": name})
+  return writeJsonToFile('db.json', users)
 }
 
-exports.getUsers = getUsers;
-exports.addUser = addUser;
+exports.getUsers = getUsers
+exports.addUsers = addUsers
