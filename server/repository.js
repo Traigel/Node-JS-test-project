@@ -1,16 +1,36 @@
-const {readJsonFromFile, writeJsonToFile} = require('./fs-utils')
+const mongoose = require('mongoose');
 
-// Берём данные из файла и возвращаем в виде промиса
-const getUsers = () => {
-  return readJsonFromFile('db.json')
+const userSchema = new mongoose.Schema({ // схема объектов, типизация (набор того что будет в объектах)
+  name: String
+});
+const User = mongoose.model('MyUser', userSchema); // модель для создания объектов (как класс)
+
+// Берём данные из БД и возвращаем в виде промиса, и поиск по квери параметрам
+exports.getUsers = (search) => {
+  if (!search) {
+    return User.find()
+  } else {
+    return User.find({name: new RegExp(search)}) // поиск того что содержит эту строку
+  }
 }
 
-// Берём данные из файла и добавляем к ним новые данные
-const addUsers =  async (name) => {
-  const users = await getUsers()
-  users.push({"id": 3, "name": name})
-  return writeJsonToFile('db.json', users)
+// Возвращает нужного user-а из БД по его id
+exports.getUser = (userId) => {
+    return User.find({_id: userId})
 }
 
-exports.getUsers = getUsers
-exports.addUsers = addUsers
+// Берём данные из БД и добавляем к ним новые данные
+exports.addUsers =  async (name) => {
+  const user = new User({name: name})
+  return await user.save();
+}
+
+// Изменяем данные в БД
+exports.updateUsers =  async (id, name) => {
+  return User.update({_id: id},{name: name})
+}
+
+// Удаляем из БД нужный объект
+exports.removeUsers =  async (userId) => {
+  return User.deleteOne({_id: userId})
+}
